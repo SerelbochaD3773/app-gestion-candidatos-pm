@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { end_points } from "../services/api"
+import { redirectAlert } from "../helpers/alerts"
+import { saveLocalStorage } from "../helpers/local-storage"
 
 const Login = () => {
   const [user, setUser] = useState("")
@@ -25,9 +27,13 @@ const Login = () => {
 
   function signIn(e) {
     e.preventDefault()
-    if (user === "" || password === "") return alert("Login or password is empty")
-    if (findUser()) return alert("Welcome admin")
-    if (findUser() == "undefined") return alert("Login or password is incorrect")
+    if (user === "" || password === "") return redirectAlert("Campos Vacíos", "El campo usuario y/o contraseña está vacío", "/login", "warning")
+    if (findUser()) {
+      saveLocalStorage("user", findUser())
+      redirectAlert("Bienvenido al aistema", "Será redireccionado al dashboard", "/dashboard", "success")
+      return
+    }
+    if (findUser() == undefined) return redirectAlert("Error de credenciales", "Usuario y/o conttaseña incorrecto", "/login", "error")
   }
 
   return (
